@@ -1,0 +1,34 @@
+import urllib3
+import re
+import requests
+import numpy as np
+
+
+# read fasta sequences and put them in a list
+
+def readFasta(fasta_path):
+    sequences = []
+
+    # open the file to read the sequences
+    with open(fasta_path, "r") as fasta:
+
+        currentSequence = ""
+
+        for line in fasta:
+            line = line.strip()
+            if line.startswith(">"):
+                if currentSequence != "":
+                    sequences.append(currentSequence)
+                currentSequence = line + "\n"
+            else: 
+                # add a line to the read sequence
+                currentSequence = currentSequence + line
+
+        if currentSequence != "":
+            sequences.append(currentSequence)
+
+    return sequences
+
+fasta_path = "/Users/georgianastan/Desktop/proteinSeqAnalysis/catalytic_activity_proteins.fasta.txt"
+proteins_list = readFasta(fasta_path)
+print(proteins_list)
