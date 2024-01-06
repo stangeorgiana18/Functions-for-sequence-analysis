@@ -2,6 +2,8 @@ import urllib3
 import re
 import requests
 import numpy as np
+from collections import OrderedDict
+from collections import defaultdict
 
 
 # read fasta sequences and put them in a list
@@ -29,6 +31,48 @@ def readFasta(fasta_path):
 
     return sequences
 
+# function to parse the seq of aminoacids and the Uniprot Accesion code
+
+def parse_seq(seq_fasta):
+
+    lines = seq_fasta.split("\n")
+    header = lines[0] # extract the first line = sequence name + uniprot code
+    wholeSequence = "".join(lines[1:]) # get the whole protein seq without the antet/header line
+
+    # [1] indicates the second element of this list which is the uniprot code
+    uniProt_AC = header.split("|")[1]
+
+
+    return uniProt_AC, wholeSequence
+
+# return the frequency of aminoacids in a list
+
+def freq_aa(seq):
+    orderedAminoacidsCount = OrderedDict()
+    for orderedAminoacids in "ACDEFGHIKLMNPQRSTVWY":
+        orderedAminoacidsCount[orderedAminoacids] = 0
+    
+    for orderedAminoacids in seq:
+        if orderedAminoacids in orderedAminoacidsCount:
+            orderedAminoacidsCount[orderedAminoacids] += 1
+  
+    freqAminoacids = [] # list that stores the no. of each aminoacid
+    for value in orderedAminoacidsCount.values():
+        freqAminoacids.append(value)
+    
+    # return the list
+    return freqAminoacids
+
+
+
 fasta_path = "/Users/georgianastan/Desktop/proteinSeqAnalysis/catalytic_activity_proteins.fasta.txt"
 proteins_list = readFasta(fasta_path)
-print(proteins_list)
+# print(proteins_list)
+
+frequences = []
+for protein in proteins_list:
+    uniProt_AC, seq = parse_seq(protein)
+    frequences.append(freq_aa(seq))
+
+print(frequences[0:10])
+
