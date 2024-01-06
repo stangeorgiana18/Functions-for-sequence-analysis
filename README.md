@@ -1,1 +1,1 @@
-# Functions-for-sequence-analysis-
+# Functions-for-sequence-analysis
