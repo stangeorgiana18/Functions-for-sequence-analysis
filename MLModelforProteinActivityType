@@ -5,6 +5,12 @@ import numpy as np
 from collections import OrderedDict
 from collections import defaultdict
 
+from sklearn.model_selection import train_test_split
+from sklearn import datasets
+from sklearn import svm
+from sys import call_tracing
+
+
 
 # read fasta sequences and put them in a list
 
@@ -74,5 +80,40 @@ for protein in proteins_list:
     uniProt_AC, seq = parse_seq(protein)
     frequences.append(freq_aa(seq))
 
-print(frequences[0:10])
+# print(frequences[0:10])
+
+catalyticActivityProteins = "/Users/georgianastan/Desktop/proteinSeqAnalysis/catalytic_activity_proteins.fasta.txt"
+NonCatalyticActivityProteins = "/Users/georgianastan/Desktop/proteinSeqAnalysis/non_catalytic_activity_proteins.fasta.txt"
+
+# insert protein by types in a respective list
+caSequences = readFasta(catalyticActivityProteins)
+noncaSequences = readFasta(NonCatalyticActivityProteins)
+
+# each row in data corresponds to a protein, each column to a feature
+# target contains the labels - 0 and 1 for proteins
+
+data = []
+target = []
+
+# consider only 300 proteins of each type
+
+for n in caSequences[0:300]:
+    uniProt_AC, seq = parse_seq(n)
+    data.append(freq_aa((seq)))
+    target.append(1) # protein type
+
+for n in noncaSequences[0:300]:
+    uniProt_AC, seq = parse_seq(n)
+    data.append(freq_aa((seq)))
+    target.append(0)
+
+# split the data into training and testing sets using train_test_split
+# and train a linear SVM model (svm.SVC) on the training data
+
+X_train, X_test, y_train, y_test = train_test_split(data, target, test_size = 0.4, random_state = 0) 
+clf = svm.SVC(kernel = 'linear', C=1, probability = True).fit(X_train, y_train)
+
+# cross validation evaluation metrics 
+accuracy = clf.score(X_test, y_test)
+print("Accuracy: ", accuracy)
 
