@@ -3,15 +3,12 @@ import re
 import requests
 from urllib.request import urlopen
 
-
 # get protein sequence:
 
 link = "http://rest.uniprot.org/uniprotkb/P04637.fasta" 
 http = urllib3.PoolManager()
 f = http.request("GET",link)
 print (f.data)
-
-
 
 # protein characteristics for a string with proteins
 
